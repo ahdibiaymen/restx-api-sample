@@ -1,4 +1,4 @@
-from crm.default_config import DefaultConfig
+from erp.default_config import DefaultConfig
 
 
 def test_app_healthiness(client):

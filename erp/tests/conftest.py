@@ -1,6 +1,6 @@
 import pytest
 
-from crm.app import create_app
+from erp.app import create_app
 
 
 @pytest.fixture()

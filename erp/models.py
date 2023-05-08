@@ -4,7 +4,7 @@ from logging import getLogger
 import peewee
 from dotenv import load_dotenv
 
-logger = getLogger("crm_api")
+logger = getLogger("ERP_api")
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 if not status:
@@ -52,12 +52,33 @@ class UserRoles(peewee.Model):
         database = pg_db
 
 
-class Products(peewee.Model):
+class Product(peewee.Model):
     id = peewee.AutoField()
     name = peewee.DateField()
     quantity = peewee.TextField()
-    price = peewee.BooleanField()
     category = peewee.TextField()
+    price = peewee.BooleanField()
 
     class Meta:
         database = pg_db
+
+
+class Order(peewee.Model):
+    user = peewee.ForeignKeyField(User, related_name="products")
+    product = peewee.ForeignKeyField(Role, related_name="users")
+    order_id = peewee.AutoField()
+    order_date = peewee.DateField()
+
+    class Meta:
+        database = pg_db
+
+
+pg_db.create_tables(
+    [
+        User,
+        Role,
+        Product,
+        UserRoles,
+        Order
+    ]
+)
