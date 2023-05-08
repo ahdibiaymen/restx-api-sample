@@ -25,6 +25,13 @@ class DefaultConfig:
     # USER PASSWORD'S SALT
     ERP_PASSWORD_SALT = os.environ.get("ERP_PASSWORD_SALT")
 
+    # JWT config
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+    JWT_RENEWAL_SECURITY = os.environ.get("JWT_RENEWAL_SECURITY")
+    JWT_EXPIRE_HOURS = 1
+    JWT_EXPIRE_MINUTES = 1
+    JWT_EXPIRE_SECONDS = 1
+
     @staticmethod
     def init_loggers():
         LOGGING = {

@@ -12,15 +12,13 @@ if not status:
     raise RuntimeError("Cannot load .env file in models file")
 
 pg_db = peewee.PostgresqlDatabase(
-    database=os.environ.get("POSTGRESQL_DB_NAME"),
-    user=os.environ.get("POSTGRESQL_DB_USER"),
-    password=os.environ.get("POSTGRESQL_DB_PASSWD"),
-    host=os.environ.get("POSTGRESQL_DB_HOST"),
-    port=os.environ.get("POSTGRESQL_DB_PORT"),
+    database=os.environ.get("ERP_PG_DATABASE"),
+    user=os.environ.get("ERP_PG_USER"),
+    password=os.environ.get("ERP_PG_PASSWORD"),
+    host=os.environ.get("ERP_PG_HOST"),
+    port=os.environ.get("ERP_PG_PORT"),
     autorollback=True,
 )
-
-pg_db.connect(reuse_if_open=True)
 
 
 class User(peewee.Model):
@@ -42,6 +40,23 @@ class Role(peewee.Model):
 
     class Meta:
         database = pg_db
+
+    @classmethod
+    def init_roles(cls):
+        roles = {
+            "reseller": "Has access to products and stocks",
+            "admin": "Has access to everything",
+            "webshop": "Has access to CRM & ERP",
+        }
+        for role_name, description in roles.items():
+            role = Role.select().where(Role.role_name == role_name)
+            if not role:
+                role = Role(role_name=role_name, description=description)
+                role.save()
+
+    @classmethod
+    def get_all_roles(cls):
+        return [role.role_name for role in Role.select()]
 
 
 class UserRoles(peewee.Model):
@@ -73,12 +88,5 @@ class Order(peewee.Model):
         database = pg_db
 
 
-pg_db.create_tables(
-    [
-        User,
-        Role,
-        Product,
-        UserRoles,
-        Order
-    ]
-)
+pg_db.create_tables([User, Role, Product, UserRoles, Order])
+pg_db.connect(reuse_if_open=True)
