@@ -41,8 +41,8 @@ repos:
     hooks:
       - id: pytest
         name: Pytest
-        entry: pytest
-        args: [ "--disable-warnings" ]
+        entry: pytest -c pytest.ini
+        args: ["--disable-warnings" ]
         language: system
         pass_filenames: false
         always_run: true

@@ -16,11 +16,11 @@ class DefaultConfig:
     BUNDLE_ERRORS = True
 
     # database
-    POSTGRESQL_DB_NAME = os.environ.get("POSTGRESQL_DB_NAME")
-    POSTGRESQL_DB_USER = os.environ.get("POSTGRESQL_DB_USER")
-    POSTGRESQL_DB_PASSWD = os.environ.get("POSTGRESQL_DB_PASSWD")
-    POSTGRESQL_DB_HOST = os.environ.get("POSTGRESQL_DB_HOST")
-    POSTGRESQL_DB_PORT = os.environ.get("POSTGRESQL_DB_PORT")
+    POSTGRESQL_DB_NAME = os.environ.get("CRM_PG_DATABASE")
+    POSTGRESQL_DB_USER = os.environ.get("CRM_PG_USER")
+    POSTGRESQL_DB_PASSWD = os.environ.get("CRM_PG_PASSWORD")
+    POSTGRESQL_DB_HOST = os.environ.get("CRM_PG_HOST")
+    POSTGRESQL_DB_PORT = int(os.environ.get("CRM_PG_PORT"))
 
     @staticmethod
     def init_loggers():
