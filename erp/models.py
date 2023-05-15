@@ -4,6 +4,8 @@ from logging import getLogger
 import peewee
 from dotenv import load_dotenv
 
+from . import exceptions, security_utils
+
 logger = getLogger("ERP_api")
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
@@ -31,6 +33,41 @@ class User(peewee.Model):
 
     class Meta:
         database = pg_db
+
+    @classmethod
+    def get_user_by_id(cls, id):
+        user = User.select().where(User.id == id)
+        if not user:
+            raise exceptions.NotFound(user_id=id)
+        return user
+
+    @classmethod
+    def check_user_exist_by_email(cls, email):
+        user = User.select().where(User.email == email)
+        if not user:
+            return None
+        return user
+
+    @classmethod
+    def login_user(cls, email, password):
+        user = User.select().where(User.email == email)
+        if not user:
+            raise exceptions.NotFound(user_email=email)
+        if not security_utils.verify_password(password, user.password):
+            raise exceptions.UnauthorizedAccess(email=email, operation="LOGIN")
+        return user
+
+    @classmethod
+    def create_new_user(cls, name, last_name, birth_date, email, password):
+        if not all((name, last_name, birth_date, email, password)):
+            raise ValueError(
+                "name,last_name,birth_date,email, password are required !"
+            )
+        # if user already exists
+        if cls.check_user_exist_by_email(email):
+            raise exceptions.AlreadyExist(
+                email=email, operation="CREATE_NEW_USER"
+            )
 
 
 class Role(peewee.Model):

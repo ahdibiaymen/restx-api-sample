@@ -1,2 +1,7 @@
+from ..api.resources.customers.controller import customers_ns
+from ..api.resources.products.controller import products_ns
+
+
 def register_endpoints_routes(app):
-    pass
+    app.add_namespace(customers_ns)
+    app.add_namespace(products_ns)

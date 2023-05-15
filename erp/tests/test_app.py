@@ -1,8 +1,8 @@
 import peewee
 
-from erp.default_config import DefaultConfig
-from erp.models import Role
-from erp.security_utils import hash_and_salt_password, verify_password
+from ..default_config import DefaultConfig
+from ..models import Role
+from ..security_utils import hash_and_salt_password, verify_password
 
 
 def test_app_healthiness(client):

@@ -1,9 +1,9 @@
 
 .PHONY: help build-services start-services stop-services
 
-build-services:
+build:
 	docker-compose --env-file erp/.env build
-start-services:
+start:
 	docker-compose --env-file erp/.env up -d
-stop-services:
+stop:
 	docker-compose --env-file erp/.env down

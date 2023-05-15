@@ -2,9 +2,9 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restx import Api
 
-from erp import models
-from erp.api.routes import register_endpoints_routes
-from erp.default_config import DefaultConfig
+from . import models
+from .api.routes import register_endpoints_routes
+from .default_config import DefaultConfig
 
 
 def create_app():

@@ -34,7 +34,8 @@ repos:
         name: Linter
         args: [
           "--extend-exclude=tests/*",
-          "--max-line-length=79"
+          "--max-line-length=79",
+          "--ignore=E712"
         ]
 
   - repo: local

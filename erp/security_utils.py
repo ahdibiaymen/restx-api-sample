@@ -1,5 +1,6 @@
 import hashlib
-from erp.default_config import DefaultConfig
+
+from .default_config import DefaultConfig
 
 
 def hash_and_salt_password(string):
