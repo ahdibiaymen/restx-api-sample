@@ -30,5 +30,5 @@ def test_app_password_verification_scheme(client):
 
 def test_app_roles(client):
     roles = set(Role.get_all_roles())
-    desired_roles = set(["admin", "webshop", "reseller"])
+    desired_roles = set(["webshop-admin", "webshop-client", "reseller"])
     assert desired_roles <= roles

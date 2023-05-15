@@ -20,3 +20,11 @@ class AlreadyExist(Exception):
         if errors:
             self.message += f": {errors}"
         super().__init__(self.message)
+
+
+class DBError(Exception):
+    def __init__(self, *args, **errors):
+        self.message = "Database error "
+        if errors:
+            self.message += f": {errors}"
+        super().__init__(self.message)

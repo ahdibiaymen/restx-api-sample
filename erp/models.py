@@ -68,11 +68,97 @@ class User(peewee.Model):
             raise exceptions.AlreadyExist(
                 email=email, operation="CREATE_NEW_USER"
             )
+        # create the new user
+        hashed_pw = security_utils.hash_and_salt_password(password)
+        new_user = User(
+            birthdate=birth_date,
+            name=name,
+            last_name=last_name,
+            email=email,
+            password=hashed_pw,
+        )
+        try:
+            new_user.save()
+            return new_user
+        except peewee.PeeweeException:
+            raise exceptions.DBError(
+                user_email=email, operation="CREATE_NEW_USER"
+            )
+
+    def get_user_roles(self):
+        try:
+            user_roles = (
+                UserRoles.select(Role.role_name)
+                .join(Role)
+                .where(UserRoles.user == self.id)
+            )
+
+            return [role.role_name for role in user_roles]
+        except peewee.PeeweeException:
+            raise exceptions.DBError
+
+    def add_new_role(self, role_name):
+        try:
+            if not role_name:
+                raise exceptions.NotFound
+            role = Role.select().where(Role.role_name == role_name).first()
+            if not role:
+                raise exceptions.NotFound
+            # check if role already granted
+            user_role = (
+                UserRoles.select()
+                .join(Role)
+                .where(
+                    (UserRoles.user == self.id) & (Role.role_name == role_name)
+                )
+            )
+            if user_role:
+                raise exceptions.AlreadyExist
+            new_user_role = UserRoles(user=self, role=role)
+            new_user_role.save()
+            return True
+        except peewee.PeeweeException:
+            raise exceptions.DBError
+
+    def remove_user_role(self, role_name):
+        try:
+            if not role_name:
+                raise exceptions.NotFound
+            user_role = (
+                UserRoles.select()
+                .join(Role)
+                .where(
+                    (Role.role_name == role_name) & (UserRoles.user == self.id)
+                )
+                .first()
+            )
+            if not user_role:
+                return False
+            user_role.delete_instance()
+            return True
+        except peewee.PeeweeException:
+            raise exceptions.DBError
+
+    def is_admin(self):
+        try:
+            admin_role = Role.select().where(Role.role_name == "admin").first()
+            is_admin = UserRoles.select().where(
+                (UserRoles.user == self.id) & (UserRoles.role == admin_role.id)
+            )
+            if is_admin:
+                return True
+            else:
+                return False
+        except peewee.PeeweeException:
+            raise exceptions.DBError
+
+    def has_any_role(self, *roles):
+        return any(self.has_role(role) for role in roles)
 
 
 class Role(peewee.Model):
     id = peewee.AutoField()
-    role_name = peewee.TextField()
+    role_name = peewee.TextField(unique=True)
     description = peewee.TextField(null=True)
 
     class Meta:
@@ -82,14 +168,19 @@ class Role(peewee.Model):
     def init_roles(cls):
         roles = {
             "reseller": "Has access to products and stocks",
-            "admin": "Has access to everything",
-            "webshop": "Has access to CRM & ERP",
+            "webshop-admin": "Has access to CRM & ERP",
+            "webshop-client": (
+                "Has access to all available products & his own commands"
+            ),
         }
         for role_name, description in roles.items():
             role = Role.select().where(Role.role_name == role_name)
             if not role:
-                role = Role(role_name=role_name, description=description)
-                role.save()
+                try:
+                    role = Role(role_name=role_name, description=description)
+                    role.save()
+                except peewee.PeeweeException:
+                    pass
 
     @classmethod
     def get_all_roles(cls):
@@ -106,10 +197,10 @@ class UserRoles(peewee.Model):
 
 class Product(peewee.Model):
     id = peewee.AutoField()
-    name = peewee.DateField()
-    quantity = peewee.TextField()
+    name = peewee.TextField()
+    quantity = peewee.IntegerField()
     category = peewee.TextField()
-    price = peewee.BooleanField()
+    price = peewee.FloatField()
 
     class Meta:
         database = pg_db
