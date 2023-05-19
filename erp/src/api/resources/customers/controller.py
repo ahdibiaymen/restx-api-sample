@@ -1,6 +1,5 @@
 from flask_restx import Resource
-
-from ..namespaces import NAMESPACES
+from src.api.resources.namespaces import NAMESPACES
 
 customers_ns = NAMESPACES["Customers"]
 

@@ -3,12 +3,11 @@ from logging import getLogger
 
 import peewee
 from dotenv import load_dotenv
-
-from . import exceptions, security_utils
+from src import exceptions, security_utils
 
 logger = getLogger("ERP_api")
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
+status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, "../.env"))
 if not status:
     logger.error("Cannot load .env file in models file")
     raise RuntimeError("Cannot load .env file in models file")

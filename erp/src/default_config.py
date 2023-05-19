@@ -4,8 +4,8 @@ from logging.config import dictConfig
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-dotenv_path = os.path.join(BASE_DIR, ".env")
-status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
+dotenv_path = os.path.join(BASE_DIR, "../.env")
+status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, "../.env"))
 if not status:
     raise RuntimeError("Cannot load .env config")
 

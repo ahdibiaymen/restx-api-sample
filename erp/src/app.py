@@ -1,10 +1,9 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restx import Api
-
-from . import models
-from .api.routes import register_endpoints_routes
-from .default_config import DefaultConfig
+from src import models
+from src.api.routes import register_endpoints_routes
+from src.default_config import DefaultConfig
 
 
 def create_app():
@@ -31,4 +30,4 @@ def create_app():
 
 
 if __name__ == "__main__":
-    create_app().run()
+    create_app().run(debug=False)

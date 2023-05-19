@@ -1,25 +1,61 @@
 from faker import Faker
 
-from erp.models import Product, Role, User, UserRoles
+from erp.models import Product, User
 
 fake = Faker()
-# print("Populate DB with products ...")
-# products = {
-#     "product1": Product(name='Espresso', quantity='110', category='Dark Roast', price=2.99),
-#     "product2": Product(name='Cappuccino', quantity='115', category='Blended Coffee', price=3.49),
-#     "product3": Product(name='Latte', quantity='112', category='Flavored Coffee', price=4.99),
-#     "product4": Product(name='Americano', quantity='118', category='Medium Roast', price=2.79),
-#     "product5": Product(name='Mocha', quantity='113', category='Chocolate Coffee', price=4.29),
-#     "product6": Product(name='Macchiato', quantity='115', category='Light Roast', price=2.49),
-#     "product7": Product(name='Irish Coffee', quantity='127', category='Alcoholic Coffee', price=5.99),
-#     "product8": Product(name='Frappuccino', quantity='111', category='Frozen Coffee', price=4.49),
-#     "product9": Product(name='Turkish Coffee', quantity='116', category='Specialty Coffee', price=3.99),
-#     "product10": Product(name='Drip Coffee', quantity='141', category='Classic Coffee', price=1.99)
-# }
-#
-# for product in products.values():
-#     product.save()
-# print("Done!")
+
+print("Populate DB with products ...")
+products = {
+    "product1": Product(
+        name="Espresso", quantity="110", category="Dark Roast", price=2.99
+    ),
+    "product2": Product(
+        name="Cappuccino",
+        quantity="115",
+        category="Blended Coffee",
+        price=3.49,
+    ),
+    "product3": Product(
+        name="Latte", quantity="112", category="Flavored Coffee", price=4.99
+    ),
+    "product4": Product(
+        name="Americano", quantity="118", category="Medium Roast", price=2.79
+    ),
+    "product5": Product(
+        name="Mocha", quantity="113", category="Chocolate Coffee", price=4.29
+    ),
+    "product6": Product(
+        name="Macchiato", quantity="115", category="Light Roast", price=2.49
+    ),
+    "product7": Product(
+        name="Irish Coffee",
+        quantity="127",
+        category="Alcoholic Coffee",
+        price=5.99,
+    ),
+    "product8": Product(
+        name="Frappuccino",
+        quantity="111",
+        category="Frozen Coffee",
+        price=4.49,
+    ),
+    "product9": Product(
+        name="Turkish Coffee",
+        quantity="116",
+        category="Specialty Coffee",
+        price=3.99,
+    ),
+    "product10": Product(
+        name="Drip Coffee",
+        quantity="141",
+        category="Classic Coffee",
+        price=1.99,
+    ),
+}
+
+for product in products.values():
+    product.save()
+print("Done!")
 
 # users
 # admin

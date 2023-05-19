@@ -1,8 +1,7 @@
 import peewee
-
-from ..default_config import DefaultConfig
-from ..models import Role
-from ..security_utils import hash_and_salt_password, verify_password
+from src.default_config import DefaultConfig
+from src.models import Role
+from src.security_utils import hash_and_salt_password, verify_password
 
 
 def test_app_healthiness(client):
