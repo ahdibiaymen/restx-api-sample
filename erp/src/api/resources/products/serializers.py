@@ -11,8 +11,19 @@ product_fields = {
     "price": fields.Float(),
 }
 
-get_serializer = products_ns.model("ProductGetSerializer", product_fields)
+product_serializer = products_ns.model("ProductGetSerializer", product_fields)
 
 standard_fields = {"status": fields.String(), "message": fields.String()}
 
 standard_serializer = products_ns.model("StandardSerializer", standard_fields)
+
+order_fields = {
+    "user": fields.String(),
+    "product": fields.String(),
+    "order_id": fields.Integer(),
+    "order_date": fields.DateTime(),
+    "order_quantity": fields.Integer(),
+    "order_price": fields.Float(),
+}
+
+order_serializer = products_ns.model("OrderSerializer", order_fields)

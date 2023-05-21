@@ -1,5 +1,7 @@
+import datetime
+
 from src import exceptions
-from src.models import Product
+from src.models import Order, Product, User
 
 
 class ProductService:
@@ -54,3 +56,61 @@ class ProductService:
             )
         else:
             return product
+
+    def get_product_orders(self, product_id):
+        product = Product.get_by_id(product_id)
+        if not product:
+            raise exceptions.NotFound(
+                product_id=product_id, operation="GET_PRODUCT_ORDERS"
+            )
+        orders = Order.select().where(Order.product == product_id)
+        return [order for order in orders]
+
+    def create_new_order(self, product_id, order_detail):
+        product = Product.get_by_id(product_id)
+        if not product:
+            raise exceptions.NotFound(
+                product_id=product_id, operation="CREATE_NEW_ORDER"
+            )
+
+        user = User.get_user_by_id(order_detail["user_id"])
+        if not user:
+            raise exceptions.NotFound(
+                user_id=order_detail["user_id"], operation="CREATE_NEW_ORDER"
+            )
+
+        if product.quantity - order_detail["quantity"] < 0:
+            raise exceptions.OrderAborted(
+                user_id=order_detail["user_id"],
+                product_id=product_id,
+                product_quantity=product.quantity,
+                order_quantity=order_detail["quantity"],
+                reason="STORAGE_LESS_THAN_QUANTITY",
+                operation="CREATE_NEW_ORDER",
+            )
+        # creating a new order
+        product.quantity -= 1
+        product.save()
+
+        order_price = product.price * order_detail["quantity"]
+        order = Order(
+            user=user.id,
+            product=product.id,
+            order_date=datetime.datetime.now(),
+            order_quantity=order_detail["quantity"],
+            order_price=order_price,
+        )
+        order.save()
+
+    def get_one_order(self, product_id, order_id):
+        product = Product.get_by_id(product_id)
+        if not product:
+            raise exceptions.NotFound(
+                product_id=product_id, operation="CREATE_NEW_ORDER"
+            )
+        order = Order.get_by_id(order_id)
+        if not order:
+            raise exceptions.NotFound(
+                order_id=order_id, operation="CREATE_NEW_ORDER"
+            )
+        return order

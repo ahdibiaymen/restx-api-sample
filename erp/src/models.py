@@ -1,3 +1,4 @@
+import datetime
 import os
 from logging import getLogger
 
@@ -35,7 +36,7 @@ class User(peewee.Model):
 
     @classmethod
     def get_user_by_id(cls, id):
-        user = User.select().where(User.id == id)
+        user = User.select().where(User.id == id).first()
         if not user:
             raise exceptions.NotFound(user_id=id)
         return user
@@ -185,6 +186,10 @@ class Role(peewee.Model):
     def get_all_roles(cls):
         return [role.role_name for role in Role.select()]
 
+    @classmethod
+    def get_by_name(cls, role_name):
+        return Role.select().where(Role.role_name == role_name).first()
+
 
 class UserRoles(peewee.Model):
     user = peewee.ForeignKeyField(User, related_name="roles")
@@ -192,6 +197,12 @@ class UserRoles(peewee.Model):
 
     class Meta:
         database = pg_db
+
+    @classmethod
+    def get_users_by_role(self, role_name):
+        role_id = Role.get_by_name(role_name).id
+        users = User.select().join(self).where(self.role == role_id)
+        return [user for user in users]
 
 
 class Product(peewee.Model):
@@ -204,15 +215,25 @@ class Product(peewee.Model):
     class Meta:
         database = pg_db
 
+    @classmethod
+    def get_by_id(cls, id):
+        return Product.select().where(Product.id == id).first()
+
 
 class Order(peewee.Model):
-    user = peewee.ForeignKeyField(User, related_name="products")
-    product = peewee.ForeignKeyField(Role, related_name="users")
+    user = peewee.ForeignKeyField(User)
+    product = peewee.ForeignKeyField(Product)
     order_id = peewee.AutoField()
-    order_date = peewee.DateField()
+    order_date = peewee.DateTimeField(default=datetime.datetime.now())
+    order_quantity = peewee.IntegerField()
+    order_price = peewee.FloatField()
 
     class Meta:
         database = pg_db
+
+    @classmethod
+    def get_by_id(cls, id):
+        return Order.select().where(Order.order_id == id).first()
 
 
 pg_db.create_tables([User, Role, Product, UserRoles, Order])

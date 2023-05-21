@@ -1,8 +1,14 @@
+import datetime
+import random
+
 from faker import Faker
 
-from erp.models import Product, User
+from erp.src.models import Order, Product, Role, User, UserRoles
 
 fake = Faker()
+
+# init roles
+Role.init_roles()
 
 print("Populate DB with products ...")
 products = {
@@ -122,4 +128,50 @@ for i in range(10):
     )
     # grant privileges
     db_user.add_new_role("webshop-client")
+print("Done!")
+
+# orders
+print("Populate DB with orders ...")
+# get customers
+customers = UserRoles.get_users_by_role("webshop-client")
+# get resellers
+resellers = UserRoles.get_users_by_role("reseller")
+# get all products
+all_products = Product.select()
+
+for i in customers:
+    product = random.choice(all_products)
+    product_price = product.price
+    product_id = product.id
+    order_quantity = fake.random_int(min=1, max=5)
+    order_price = float(order_quantity) * float(product_price)
+    order = Order(
+        user=i,
+        product=product_id,
+        order_date=fake.date_time_between(
+            start_date=datetime.datetime(2019, 3, 20, 7, 46, 39),
+            end_date=datetime.datetime.now(),
+        ),
+        order_quantity=order_quantity,
+        order_price=order_price,
+    )
+    order.save()
+
+for i in resellers:
+    product = random.choice(all_products)
+    product_price = product.price
+    product_id = product.id
+    order_quantity = fake.random_int(min=50, max=1500)
+    order_price = float(order_quantity) * float(product_price)
+    order = Order(
+        user=i.id,
+        product=product_id,
+        order_date=fake.date_time_between(
+            start_date=datetime.datetime(2019, 3, 20, 7, 46, 39),
+            end_date=datetime.datetime.now(),
+        ),
+        order_quantity=order_quantity,
+        order_price=order_price,
+    )
+    order.save()
 print("Done!")

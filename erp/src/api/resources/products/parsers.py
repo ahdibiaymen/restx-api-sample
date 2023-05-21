@@ -15,7 +15,7 @@ filter_products.add_argument(
     required=False,
     nullable=True,
 )
-
+##########################################################################
 new_product = reqparse.RequestParser()
 new_product.add_argument(
     "name",
@@ -40,6 +40,22 @@ new_product.add_argument(
 )
 new_product.add_argument(
     "price",
+    type=int,
+    location="json",
+    required=True,
+    nullable=False,
+)
+##########################################################################
+new_order = reqparse.RequestParser()
+new_order.add_argument(
+    "user_id",
+    type=int,
+    location="json",
+    required=True,
+    nullable=False,
+)
+new_order.add_argument(
+    "quantity",
     type=int,
     location="json",
     required=True,
