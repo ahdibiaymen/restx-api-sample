@@ -1,0 +1,11 @@
+/db-data/
+.git/
+.idea/
+jenkins_configuration/
+jenkins_data/
+Jenkinsfile
+Makefile
+__pycache__/
+.pytest_cache/
+pytest.ini
+README.md

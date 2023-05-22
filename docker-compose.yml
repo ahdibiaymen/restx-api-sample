@@ -13,13 +13,24 @@ services:
       POSTGRES_PASSWORD: ${ERP_PG_PASSWORD}
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
+    networks:
+      - paytonkawa-network
 
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
+  erp-app:
+    build:
+      context: ./erp
+      dockerfile: Dockerfile
+    container_name: erp-app
+    env_file:
+      - erp/.env
     ports:
-      - "8890:8080"
-      - "50000:50000"
-    volumes:
-      - ${pwd}/jenkins_compose/jenkins_configuration:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+      - 8888:8000
+    depends_on:
+      - postgres-db
+    networks:
+      - paytonkawa-network
+
+
+networks:
+  paytonkawa-network:
+    external: true

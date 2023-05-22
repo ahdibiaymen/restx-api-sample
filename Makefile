@@ -2,8 +2,10 @@
 .PHONY: help build-services start-services stop-services
 
 build:
-	docker-compose --env-file erp/.env build
+	docker network create --attachable paytonkawa-network
+	docker-compose  build
 start:
-	docker-compose --env-file erp/.env up -d
+	docker-compose  up -d
 stop:
-	docker-compose --env-file erp/.env down
+	docker-compose  down
+	docker network rm paytonkawa-network
