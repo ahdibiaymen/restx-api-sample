@@ -3,12 +3,54 @@ import random
 
 from faker import Faker
 
-from erp.src.models import Order, Product, Role, User, UserRoles
+from erp.src.models import Order, Product, Prospect, Role, User, UserRoles
 
 fake = Faker()
 
 # init roles
 Role.init_roles()
+
+print("Populate DB with prospects ...")
+
+leads_list = [
+    "REFERRAL",
+    "WEBSITE",
+    "SOCIAL_MEDIA",
+    "EVENT",
+    "ADVERTISING",
+    "EMAIL",
+    "SALES_OUTREACH",
+    "PARTNERSHIP",
+    "OTHER",
+]
+
+status_list = [
+    "NEW_LEAD",
+    "CONTACTED",
+    "QUALIFIED",
+    "PROPOSAL_SENT",
+    "NEGOTIATING",
+    "CLOSED_WON",
+    "CLOSED_LOST",
+    "ON_HOLD",
+    "DISQUALIFIED",
+    "OTHER",
+]
+for i in range(10):
+    name = fake.first_name()
+    last_name = fake.last_name()
+    user_data = {
+        "birth_date": fake.date_of_birth(minimum_age=18, maximum_age=65),
+        "name": name + " " + last_name,
+        "email": name + "-" + last_name + "@mail.com",
+        "company": fake.company(),
+        "phone_number": fake.phone_number(),
+        "lead_source": random.choice(leads_list),
+        "status": random.choice(status_list),
+    }
+    prospect = Prospect(**user_data)
+    prospect.save()
+print("Done!")
 
 print("Populate DB with products ...")
 products = {

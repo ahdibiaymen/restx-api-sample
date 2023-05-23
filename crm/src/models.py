@@ -6,7 +6,7 @@ import peewee
 from dotenv import load_dotenv
 from src import exceptions, security_utils
 
-logger = getLogger("ERP_api")
+logger = getLogger("CRM_api")
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 status = load_dotenv(dotenv_path=os.path.join(BASE_DIR, "../.env"))
 if not status:
@@ -199,9 +199,24 @@ class UserRoles(peewee.Model):
         database = pg_db
 
     @classmethod
-    def get_users_by_role(self, role_name):
+    def get_users_by_role(
+        self,
+        role_name,
+        name_filter=None,
+        last_name_filter=None,
+        email_filter=None,
+        user_id_filter=None,
+    ):
         role_id = Role.get_by_name(role_name).id
         users = User.select().join(self).where(self.role == role_id)
+        if name_filter:
+            users = users.where(User.name == name_filter)
+        if last_name_filter:
+            users = users.where(User.last_name == last_name_filter)
+        if email_filter:
+            users = users.where(User.email == email_filter)
+        if user_id_filter:
+            users = users.where(User.id == user_id_filter)
         return [user for user in users]
 
 
