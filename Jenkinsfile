@@ -4,12 +4,14 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh 'make stop'
                 sh 'make build'
+                sh 'make start'
             }
         }
         stage('Test') {
             steps {
-                sh 'docker exec erp-app pytest'
+                    sh 'docker exec erp-app pytest'
             }
         }
         stage('Deploy') {

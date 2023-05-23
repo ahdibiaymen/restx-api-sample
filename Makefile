@@ -8,11 +8,14 @@ load-env:
 populate-db:
 	container_id=$(docker ps | grep erp-app | awk '{print $1}')
 	docker exec $container_id
-build:
+create-network:
 	docker network create --attachable paytonkawa-network
+remove-network:
+	docker network rm paytonkawa-network
+build:
 	docker-compose build
 start:
-	docker-compose  up -d
+	docker-compose  up -d --force-recreate
 stop:
 	docker-compose  down
-	docker network rm paytonkawa-network
+
