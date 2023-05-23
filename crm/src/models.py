@@ -50,7 +50,7 @@ class User(peewee.Model):
 
     @classmethod
     def login_user(cls, email, password):
-        user = User.select().where(User.email == email)
+        user = User.select().where(User.email == email).first()
         if not user:
             raise exceptions.NotFound(user_email=email)
         if not security_utils.verify_password(password, user.password):
@@ -58,23 +58,33 @@ class User(peewee.Model):
         return user
 
     @classmethod
-    def create_new_user(cls, name, last_name, birth_date, email, password):
-        if not all((name, last_name, birth_date, email, password)):
+    def create_new_user(cls, user_info):
+        if not all(
+            (
+                user_info["name"],
+                user_info["last_name"],
+                user_info["birth_date"],
+                user_info["email"],
+                user_info["password"],
+            )
+        ):
             raise ValueError(
                 "name,last_name,birth_date,email, password are required !"
             )
         # if user already exists
-        if cls.check_user_exist_by_email(email):
+        if cls.check_user_exist_by_email(user_info["email"]):
             raise exceptions.AlreadyExist(
-                email=email, operation="CREATE_NEW_USER"
+                email=user_info["email"], operation="CREATE_NEW_USER"
             )
         # create the new user
-        hashed_pw = security_utils.hash_and_salt_password(password)
+        hashed_pw = security_utils.hash_and_salt_password(
+            user_info["password"]
+        )
         new_user = User(
-            birthdate=birth_date,
-            name=name,
-            last_name=last_name,
-            email=email,
+            birthdate=user_info["birth_date"],
+            name=user_info["name"],
+            last_name=user_info["last_name"],
+            email=user_info["email"],
             password=hashed_pw,
         )
         try:
@@ -82,7 +92,7 @@ class User(peewee.Model):
             return new_user
         except peewee.PeeweeException:
             raise exceptions.DBError(
-                user_email=email, operation="CREATE_NEW_USER"
+                user_email=user_info["email"], operation="CREATE_NEW_USER"
             )
 
     def get_user_roles(self):
@@ -93,7 +103,7 @@ class User(peewee.Model):
                 .where(UserRoles.user == self.id)
             )
 
-            return [role.role_name for role in user_roles]
+            return [user_role.role.role_name for user_role in user_roles]
         except peewee.PeeweeException:
             raise exceptions.DBError
 

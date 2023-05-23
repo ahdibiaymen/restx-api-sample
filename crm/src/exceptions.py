@@ -34,6 +34,31 @@ class OrderAborted(Exception):
         super().__init__(self.message)
 
 
+class BadJWTSignature(Exception):
+    def __init__(self, **errors):
+        self.message = "JWT signature is invalid"
+        if errors:
+            self.message += f": {errors}"
+        super().__init__(self.message)
+
+
+class NoOperation(Exception):
+    def __init__(self, reason=False):
+        self.message = "No operation needed"
+        if reason:
+            self.message += f": {reason}"
+        super().__init__(self.message)
+
+
+class ParameterError(Exception):
+    def __init__(self, **errors):
+        self.message = "Arguments passed are invalid"
+        self.errors = errors
+        if errors:
+            self.message += f": {errors}"
+        super().__init__(self.message)
+
+
 class DBError(Exception):
     def __init__(self, *args, **errors):
         self.message = "Database error "
