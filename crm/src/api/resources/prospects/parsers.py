@@ -1,0 +1,91 @@
+from flask_restx import reqparse
+
+filter_prospects = reqparse.RequestParser()
+filter_prospects.add_argument(
+    "name",
+    type=str,
+    location="args",
+    required=False,
+    nullable=True,
+)
+filter_prospects.add_argument(
+    "company",
+    type=str,
+    location="args",
+    required=False,
+    nullable=True,
+)
+##########################################################################
+new_prospect = reqparse.RequestParser()
+new_prospect.add_argument(
+    "name",
+    type=str,
+    location="json",
+    required=True,
+    nullable=False,
+)
+new_prospect.add_argument(
+    "company",
+    type=str,
+    location="json",
+    required=True,
+    nullable=False,
+)
+new_prospect.add_argument(
+    "email",
+    type=str,
+    location="json",
+    required=True,
+    nullable=False,
+)
+new_prospect.add_argument(
+    "phone_number",
+    type=str,
+    location="json",
+    required=True,
+    nullable=False,
+)
+new_prospect.add_argument(
+    "lead_source",
+    type=str,
+    location="json",
+    choices=(
+        "REFERRAL",
+        "WEBSITE",
+        "SOCIAL_MEDIA",
+        "EVENT",
+        "ADVERTISING",
+        "EMAIL",
+        "SALES_OUTREACH",
+        "PARTNERSHIP",
+        "OTHER",
+    ),
+    required=True,
+    nullable=False,
+)
+new_prospect.add_argument(
+    "status",
+    type=str,
+    location="json",
+    choices=(
+        "NEW_LEAD",
+        "CONTACTED",
+        "QUALIFIED",
+        "PROPOSAL_SENT",
+        "NEGOTIATING",
+        "CLOSED_WON",
+        "CLOSED_LOST",
+        "ON_HOLD",
+        "DISQUALIFIED",
+        "OTHER",
+    ),
+    required=True,
+    nullable=False,
+)
+new_prospect.add_argument(
+    "note",
+    type=str,
+    location="json",
+    required=False,
+    nullable=False,
+)
