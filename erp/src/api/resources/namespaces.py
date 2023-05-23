@@ -7,4 +7,7 @@ NAMESPACES = {
     "Products": Namespace(
         "products", description="endpoint for operations related to products"
     ),
+    "Users": Namespace(
+        "users", description="endpoint for operations related to users"
+    ),
 }
