@@ -22,9 +22,23 @@ services:
       dockerfile: Dockerfile
     container_name: erp-app
     env_file:
-      - erp/.env
+      - erp/.env_prod
     ports:
       - 8888:8000
+    depends_on:
+      - postgres-db
+    networks:
+      - paytonkawa-network
+
+  crm-app:
+    build:
+      context: ./crm
+      dockerfile: Dockerfile
+    container_name: crm-app
+    env_file:
+      - crm/.env_prod
+    ports:
+      - 8889:8000
     depends_on:
       - postgres-db
     networks:

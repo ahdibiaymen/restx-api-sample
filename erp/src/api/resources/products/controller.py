@@ -12,6 +12,7 @@ from src.api.resources.products.serializers import (
     standard_serializer,
 )
 from src.api.resources.products.service import ProductService
+from src.security_utils import endpoint_allowed_roles, valid_jwt_required
 
 products_ns = NAMESPACES["Products"]
 
@@ -25,6 +26,8 @@ class Products(Resource):
     @products_ns.response(500, "Internal server error")
     @products_ns.expect(filter_products, validate=True)
     @products_ns.marshal_with(product_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin", "reseller"])
     def get(self):
         """List all products (with/without FILTERS)"""
         args = filter_products.parse_args()
@@ -39,6 +42,8 @@ class Products(Resource):
     @products_ns.response(500, "Internal server error")
     @products_ns.expect(new_product, validate=True)
     @products_ns.marshal_with(standard_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin", "reseller"])
     def post(self):
         """Create new product"""
         args = new_product.parse_args()
@@ -65,6 +70,8 @@ class OneproductDetail(Resource):
     @products_ns.response(404, "Not found")
     @products_ns.response(500, "Internal server error")
     @products_ns.marshal_with(product_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin", "reseller"])
     def get(self, product_id):
         """Get one product detail"""
         product_service = ProductService()
@@ -80,6 +87,8 @@ class AllproductOrders(Resource):
     @products_ns.response(404, "Not found")
     @products_ns.response(500, "Internal server error")
     @products_ns.marshal_with(order_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin", "reseller"])
     def get(self, product_id):
         """List all orders for a product"""
         product_service = ProductService()
@@ -94,6 +103,8 @@ class AllproductOrders(Resource):
     @products_ns.response(500, "Internal server error")
     @products_ns.expect(new_order, validate=True)
     @products_ns.marshal_with(standard_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin", "reseller"])
     def post(self, product_id):
         """Create new order for a product"""
         args = new_order.parse_args()
@@ -127,6 +138,8 @@ class OneproductOrderDetail(Resource):
     @products_ns.response(404, "Not found")
     @products_ns.response(500, "Internal server error")
     @products_ns.marshal_with(order_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin", "reseller"])
     def get(self, product_id, order_id):
         """Get one order detail"""
         product_service = ProductService()

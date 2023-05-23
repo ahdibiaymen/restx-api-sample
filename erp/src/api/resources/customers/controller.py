@@ -8,6 +8,7 @@ from src.api.resources.customers.serializers import (
 )
 from src.api.resources.customers.service import CustomersService
 from src.api.resources.namespaces import NAMESPACES
+from src.security_utils import endpoint_allowed_roles, valid_jwt_required
 
 customers_ns = NAMESPACES["Customers"]
 
@@ -20,6 +21,8 @@ class Customers(Resource):
     @customers_ns.response(500, "Internal server error")
     @customers_ns.expect(filter_customers, validate=True)
     @customers_ns.marshal_with(customer_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin"])
     def get(self):
         """List all customers"""
         args = filter_customers.parse_args()
@@ -36,6 +39,8 @@ class OneCustomerDetail(Resource):
     @customers_ns.response(404, "Not Found")
     @customers_ns.response(500, "Internal server error")
     @customers_ns.marshal_with(customer_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin"])
     def get(self, customer_id):
         """Get one customer detail"""
         customerservice = CustomersService()
@@ -55,6 +60,8 @@ class AllCustomerOrders(Resource):
     @customers_ns.response(404, "Not Found")
     @customers_ns.response(500, "Internal server error")
     @customers_ns.marshal_with(order_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin"])
     def get(self, customer_id):
         """List all orders for a customer"""
         customerservice = CustomersService()
@@ -74,6 +81,8 @@ class OneCustomerOrderProductDetail(Resource):
     @customers_ns.response(404, "Not Found")
     @customers_ns.response(500, "Internal server error")
     @customers_ns.marshal_with(product_serializer)
+    @valid_jwt_required()
+    @endpoint_allowed_roles(roles=["webshop-admin"])
     def get(self, customer_id, order_id):
         """get order product detail"""
         customerservice = CustomersService()
