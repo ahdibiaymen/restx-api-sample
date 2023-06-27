@@ -1,0 +1,50 @@
+version: "3"
+services:
+  postgres-db:
+    image: postgres
+    container_name: erp_db
+    env_file:
+      - erp/.env
+    ports:
+      - '15432:5432'
+    environment:
+      POSTGRES_DB: ${ERP_PG_DATABASE}
+      POSTGRES_USER: ${ERP_PG_USER}
+      POSTGRES_PASSWORD: ${ERP_PG_PASSWORD}
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+    networks:
+      - paytonkawa-network
+
+  erp-app:
+    build:
+      context: ./erp
+      dockerfile: Dockerfile
+    container_name: erp-app
+    env_file:
+      - erp/.env_prod
+    ports:
+      - 8888:8000
+    depends_on:
+      - postgres-db
+    networks:
+      - paytonkawa-network
+
+  crm-app:
+    build:
+      context: ./crm
+      dockerfile: Dockerfile
+    container_name: crm-app
+    env_file:
+      - crm/.env_prod
+    ports:
+      - 8889:8000
+    depends_on:
+      - postgres-db
+    networks:
+      - paytonkawa-network
+
+
+networks:
+  paytonkawa-network:
+    external: true
